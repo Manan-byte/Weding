@@ -1,0 +1,2 @@
+CREATE POLICY "Public read access for wedding-assets" ON storage.objects FOR SELECT USING (bucket_id = 'wedding-assets');
+CREATE POLICY "Service role upload for wedding-assets" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'wedding-assets');

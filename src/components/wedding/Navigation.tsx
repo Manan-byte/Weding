@@ -31,7 +31,15 @@ const Navigation = memo(() => {
 
   const handleClick = useCallback((href: string) => {
     setMobileOpen(false);
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+    // Delay scroll to let mobile menu close first, preventing scroll conflicts
+    setTimeout(() => {
+      const el = document.querySelector(href);
+      if (el) {
+        const navHeight = 64; // h-16 = 4rem = 64px
+        const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }, 300);
   }, []);
 
   return (
@@ -41,7 +49,7 @@ const Navigation = memo(() => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? "bg-background/90 backdrop-blur-md shadow-elegant border-b border-gold/10"
+          ? "bg-background/95 shadow-elegant border-b border-gold/10"
           : "bg-transparent"
       }`}
     >
@@ -71,7 +79,8 @@ const Navigation = memo(() => {
         {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-foreground transition-colors"
+          className="md:hidden text-foreground transition-colors p-2 -mr-2"
+          aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
         >
           {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
@@ -84,14 +93,14 @@ const Navigation = memo(() => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background/95 backdrop-blur-md border-b border-gold/10"
+            className="md:hidden bg-background/98 border-b border-gold/10"
           >
             <div className="flex flex-col items-center gap-4 py-6">
               {links.map((link) => (
                 <button
                   key={link.label}
                   onClick={() => handleClick(link.href)}
-                  className="font-body text-sm tracking-wider text-foreground hover:text-gold-dark transition-colors"
+                  className="font-body text-sm tracking-wider text-foreground hover:text-gold-dark active:text-gold-dark transition-colors py-2 px-6"
                 >
                   {link.label}
                 </button>

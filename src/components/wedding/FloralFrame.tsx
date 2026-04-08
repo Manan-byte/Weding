@@ -1,7 +1,7 @@
-import floralTL from "@/assets/floral-watercolor-tl.png";
-import floralTR from "@/assets/floral-watercolor-tr.png";
-import floralBL from "@/assets/floral-watercolor-bl.png";
-import floralBR from "@/assets/floral-watercolor-br.png";
+import floralTL from "@/assets/floral-watercolor-tl.webp";
+import floralTR from "@/assets/floral-watercolor-tr.webp";
+import floralBL from "@/assets/floral-watercolor-bl.webp";
+import floralBR from "@/assets/floral-watercolor-br.webp";
 
 interface FloralFrameProps {
   variant?: "blue" | "pink" | "mixed" | "all";

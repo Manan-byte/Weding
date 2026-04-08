@@ -5,10 +5,10 @@ interface FallingLeavesProps {
   count?: number;
 }
 
-const FallingLeaves = memo(({ count = 10 }: FallingLeavesProps) => {
+const FallingLeaves = memo(({ count = 8 }: FallingLeavesProps) => {
   const isMobile = useIsMobile();
-  // Reduce leaf count on mobile for better performance
-  const effectiveCount = isMobile ? Math.min(count, 6) : count;
+  // Significantly reduce on mobile for smooth scrolling
+  const effectiveCount = isMobile ? Math.min(count, 4) : Math.min(count, 8);
 
   const leaves = useMemo(
     () =>

@@ -19,6 +19,7 @@ const SectionFallback = () => (
   </div>
 );
 
+// Wedding invitation page
 const Index = () => {
   const [showCover, setShowCover] = useState(true);
   const [musicReady, setMusicReady] = useState(false);

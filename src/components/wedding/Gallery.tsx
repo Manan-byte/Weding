@@ -1,18 +1,18 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
-import floralTL from "@/assets/floral-watercolor-tl.png";
-import floralBR from "@/assets/floral-watercolor-br.png";
+import floralTL from "@/assets/floral-watercolor-tl.webp";
+import floralBR from "@/assets/floral-watercolor-br.webp";
 import FallingLeaves from "./FallingLeaves";
 
-import coupleGarden1 from "@/assets/couple-garden-1.jpg";
-import coupleGarden2 from "@/assets/couple-garden-2.jpg";
-import coupleGarden3 from "@/assets/couple-garden-3.jpg";
-import coupleGarden4 from "@/assets/couple-garden-4.jpg";
-import galleryTable from "@/assets/gallery-table.jpg";
-import galleryCake from "@/assets/gallery-cake.jpg";
-import galleryLovebirds from "@/assets/gallery-lovebirds.jpg";
-import outdoorHero from "@/assets/outdoor-wedding-hero.jpg";
+import coupleGarden1 from "@/assets/couple-garden-1.webp";
+import coupleGarden2 from "@/assets/couple-garden-2.webp";
+import coupleGarden3 from "@/assets/couple-garden-3.webp";
+import coupleGarden4 from "@/assets/couple-garden-4.webp";
+import galleryTable from "@/assets/gallery-table.webp";
+import galleryCake from "@/assets/gallery-cake.webp";
+import galleryLovebirds from "@/assets/gallery-lovebirds.webp";
+import outdoorHero from "@/assets/outdoor-wedding-hero.webp";
 
 const photos = [
   { src: coupleGarden1, alt: "Irma & Manan - Foto Bersama di Taman", span: "md:col-span-2 md:row-span-2", height: "h-48 md:h-[540px]" },
@@ -88,7 +88,7 @@ const Gallery = () => {
     <section id="gallery" className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, hsl(100 20% 97%) 0%, hsl(140 35% 90%) 100%)" }}>
       <img src={floralTL} alt="" className="absolute top-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
       <img src={floralBR} alt="" className="absolute bottom-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
-      <FallingLeaves count={16} />
+      <FallingLeaves count={8} />
 
       <div className="container max-w-6xl mx-auto px-4">
         <motion.div
@@ -139,7 +139,7 @@ const Gallery = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 backdrop-blur-sm p-2 sm:p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/90 p-2 sm:p-4"
             onClick={() => setSelectedIndex(null)}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}

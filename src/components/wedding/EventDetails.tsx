@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { MapPin, Clock, Heart, ExternalLink } from "lucide-react";
-import floralTR from "@/assets/floral-watercolor-tr.png";
-import floralBL from "@/assets/floral-watercolor-bl.png";
-import outdoorReception from "@/assets/outdoor-wedding-reception.jpg";
+import floralTR from "@/assets/floral-watercolor-tr.webp";
+import floralBL from "@/assets/floral-watercolor-bl.webp";
+import outdoorReception from "@/assets/outdoor-wedding-reception.webp";
 import FallingLeaves from "./FallingLeaves";
 
 const VENUE_ADDRESS = "Jl. Jend. A. Yani No. 25, RT 03/RW 03, Krisik, Kec. Cipari, Kab. Cilacap, Jawa Tengah";
@@ -14,7 +14,7 @@ const event = {
   date: "10 Juni 2026",
   time: "08.00 - 10.00 WIB",
   venue: VENUE_ADDRESS,
-  description: "Saksi suci penyatuan dua hati dalam ikatan pernikahan yang penuh berkah.",
+  description: "Dengan mengharap ridho Allah SWT, kami akan melangsungkan akad nikah. Mohon doa restu.",
 };
 
 const cardVariants = {
@@ -37,7 +37,7 @@ const EventDetails = () => {
       </div>
       <img src={floralTR} alt="" className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-50" loading="lazy" decoding="async" width={256} height={256} />
       <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-50" loading="lazy" decoding="async" width={256} height={256} />
-      <FallingLeaves count={14} />
+      <FallingLeaves count={8} />
 
       <div className="container max-w-5xl mx-auto px-4 relative z-10">
         <motion.div
@@ -47,8 +47,8 @@ const EventDetails = () => {
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-10 sm:mb-16"
         >
-          <p className="font-body text-xs sm:text-sm tracking-[0.3em] uppercase text-sage-green-deep mb-3">Save The Date</p>
-          <h2 className="font-script text-4xl sm:text-5xl md:text-6xl text-foreground mb-4">Rangkaian Acara</h2>
+          <p className="font-body text-xs sm:text-sm tracking-[0.3em] uppercase text-sage-green-deep mb-3">Insya Allah</p>
+          <h2 className="font-script text-4xl sm:text-5xl md:text-6xl text-foreground mb-4">Akad Nikah</h2>
           <div className="ornament-divider max-w-xs mx-auto">
             <Heart className="w-5 h-5 text-gold-dark fill-gold-dark" />
           </div>
@@ -62,7 +62,7 @@ const EventDetails = () => {
             variants={cardVariants}
             custom={0}
             transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="bg-background/80 backdrop-blur-sm rounded-lg p-5 sm:p-6 md:p-8 shadow-elegant text-center border border-gold/20"
+            className="bg-background/95 rounded-lg p-5 sm:p-6 md:p-8 shadow-elegant text-center border border-gold/20"
           >
             <h3 className="font-script text-2xl sm:text-3xl md:text-4xl text-foreground mb-1">{event.title}</h3>
             <p className="font-body text-xs uppercase tracking-widest text-gold-dark mb-4 sm:mb-6">{event.subtitle}</p>

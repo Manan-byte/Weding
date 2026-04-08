@@ -34,7 +34,7 @@ const CountdownTimer = memo(({ targetDate }: CountdownTimerProps) => {
     <div className="flex gap-3 sm:gap-4 md:gap-8 justify-center">
       {units.map(({ label, value }) => (
         <div key={label} className="text-center">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg bg-background/40 backdrop-blur-md border border-white/30 flex items-center justify-center mb-1.5 sm:mb-2">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg bg-background/40 border border-white/30 flex items-center justify-center mb-1.5 sm:mb-2">
             <span className="font-serif-display text-xl sm:text-2xl md:text-3xl font-semibold text-white tabular-nums">
               {String(value).padStart(2, "0")}
             </span>

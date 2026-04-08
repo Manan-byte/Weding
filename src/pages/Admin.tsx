@@ -21,7 +21,7 @@ const GuestRow = memo(({ guest, index, baseUrl, copiedIndex, onCopy, onRemove }:
 }) => {
   const link = `${baseUrl}/?to=${encodeURIComponent(guest.name)}`;
   return (
-    <div className="flex items-center gap-2 sm:gap-3 bg-background/80 backdrop-blur-sm border border-gold/15 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 group">
+    <div className="flex items-center gap-2 sm:gap-3 bg-background/95 border border-gold/15 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 group">
       <Link className="w-4 h-4 text-gold-dark shrink-0 hidden sm:block" />
       <div className="flex-1 min-w-0">
         <p className="font-body text-sm font-medium text-foreground truncate">{guest.name}</p>
@@ -90,7 +90,7 @@ const Admin = () => {
     const { error } = await supabase.from("guests").delete().eq("id", guest.id);
     if (error) {
       console.error("Error removing guest:", error);
-      toast.error("Gagal menghapus tamu");
+      toast.error("Gagal menghapus nama");
     } else {
       setGuests((prev) => prev.filter((g) => g.id !== guest.id));
     }
@@ -100,10 +100,10 @@ const Admin = () => {
 
   const copyLink = useCallback((name: string, index: number) => {
     const link = `${baseUrl}/?to=${encodeURIComponent(name)}`;
-    const message = `💍 *Undangan Pernikahan Irma & Manan*\n\nAssalamu'alaikum Wr. Wb.\n\nKepada Yth.\nBapak/Ibu/Saudara/i *${name}*\n\nDengan memohon rahmat Allah SWT, kami mengundang Anda untuk hadir di acara pernikahan kami.\n\n📅 10 Juni 2026\n📍 Cilacap, Jawa Tengah\n\nBuka undangan di:\n${link}\n\nMerupakan kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.\n\nWassalamu'alaikum Wr. Wb.\n_Irma & Manan_`;
+    const message = `💍 *Pernikahan Irma & Manan*\n\nAssalamu'alaikum Wr. Wb.\n\nKepada Yth.\nBapak/Ibu/Saudara/i *${name}*\n\nDengan memohon rahmat Allah SWT, kami bermaksud memberitahukan bahwa kami akan melangsungkan akad nikah pada:\n\n📅 10 Juni 2026\n📍 KUA Kec. Cipari, Kab. Cilacap, Jawa Tengah\n\nKami mohon doa restu dari Bapak/Ibu/Saudara/i untuk kelancaran pernikahan kami.\n\nBuka kabar bahagia di:\n${link}\n\nMerupakan kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan memberikan doa restu.\n\nWassalamu'alaikum Wr. Wb.\n_Irma & Manan_`;
     navigator.clipboard.writeText(message);
     setCopiedIndex(index);
-    toast.success(`Pesan undangan untuk ${name} berhasil disalin!`);
+    toast.success(`Pesan untuk ${name} berhasil disalin!`);
     setTimeout(() => setCopiedIndex(null), 2000);
   }, [baseUrl]);
 
@@ -120,7 +120,7 @@ const Admin = () => {
     const name = input.trim();
     if (!name) return;
     if (guests.some((g) => g.name === name)) {
-      toast.error("Nama tamu sudah ada dalam daftar");
+      toast.error("Nama sudah ada dalam daftar");
       return;
     }
 
@@ -133,7 +133,7 @@ const Admin = () => {
 
     if (error) {
       console.error("Error adding guest:", error);
-      toast.error("Gagal menambah tamu");
+      toast.error("Gagal menambah nama");
     } else if (data) {
       setGuests((prev) => [...prev, data]);
       setInput("");
@@ -151,7 +151,7 @@ const Admin = () => {
   if (!authenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30 flex items-center justify-center px-4">
-        <div className="w-full max-w-sm bg-background/80 backdrop-blur-sm border border-gold/20 rounded-2xl p-6 sm:p-8 text-center space-y-5 sm:space-y-6">
+        <div className="w-full max-w-sm bg-background/95 border border-gold/20 rounded-2xl p-6 sm:p-8 text-center space-y-5 sm:space-y-6">
           <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gold/10 mx-auto">
             <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-gold-dark" />
           </div>
@@ -189,10 +189,10 @@ const Admin = () => {
             Admin Panel
           </div>
           <h1 className="font-script text-3xl sm:text-4xl md:text-5xl text-foreground mb-2">
-            Generate Link Undangan
+            Generate Link Kabar Bahagia
           </h1>
           <p className="font-body text-muted-foreground text-xs sm:text-sm">
-            Tambahkan nama tamu lalu salin link undangan personal mereka.
+            Tambahkan nama lalu salin link personal mereka.
           </p>
         </div>
 
@@ -202,7 +202,7 @@ const Admin = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ketik nama tamu..."
+            placeholder="Ketik nama penerima..."
             className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
             disabled={adding}
           />
@@ -225,7 +225,7 @@ const Admin = () => {
           <>
             <div className="flex items-center justify-between mb-3">
               <span className="font-body text-xs sm:text-sm text-muted-foreground">
-                {guests.length} tamu
+                {guests.length} penerima
               </span>
               <button
                 onClick={copyAll}
@@ -252,7 +252,7 @@ const Admin = () => {
           </>
         ) : (
           <div className="text-center py-16 text-muted-foreground font-body text-sm">
-            Belum ada tamu. Mulai tambahkan nama di atas.
+            Belum ada penerima. Mulai tambahkan nama di atas.
           </div>
         )}
       </div>

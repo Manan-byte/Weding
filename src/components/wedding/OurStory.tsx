@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
-import couplePhoto from "@/assets/couple-garden-3.jpg";
-import floralTL from "@/assets/floral-watercolor-tl.png";
-import floralBR from "@/assets/floral-watercolor-br.png";
-import outdoorAkad from "@/assets/outdoor-wedding-akad.jpg";
+import couplePhoto from "@/assets/couple-garden-3.webp";
+import floralTL from "@/assets/floral-watercolor-tl.webp";
+import floralBR from "@/assets/floral-watercolor-br.webp";
+import outdoorAkad from "@/assets/outdoor-wedding-akad.webp";
 import FallingLeaves from "./FallingLeaves";
 
 const textReveal = {
@@ -35,7 +35,7 @@ const OurStory = () => {
       </div>
       <img src={floralTL} alt="" className="absolute top-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-50" loading="lazy" decoding="async" width={256} height={256} />
       <img src={floralBR} alt="" className="absolute bottom-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-50" loading="lazy" decoding="async" width={256} height={256} />
-      <FallingLeaves count={14} />
+      <FallingLeaves count={8} />
 
       <div className="container max-w-5xl mx-auto px-4 relative z-10">
         <motion.div

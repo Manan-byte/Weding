@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
-import floralBL from "@/assets/floral-watercolor-bl.png";
-import floralBR from "@/assets/floral-watercolor-br.png";
+import floralBL from "@/assets/floral-watercolor-bl.webp";
+import floralBR from "@/assets/floral-watercolor-br.webp";
 import FallingLeaves from "./FallingLeaves";
 
 const Footer = () => {
@@ -9,7 +9,7 @@ const Footer = () => {
     <footer className="relative py-10 sm:py-12 text-center overflow-hidden" style={{ background: "linear-gradient(180deg, hsl(100 20% 97%), hsl(140 35% 90% / 0.5), hsl(60 30% 94% / 0.5))" }}>
       <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
       <img src={floralBR} alt="" className="absolute bottom-0 right-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
-      <FallingLeaves count={12} />
+      <FallingLeaves count={6} />
 
       <div className="container max-w-4xl mx-auto px-4">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>

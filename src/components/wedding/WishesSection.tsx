@@ -3,9 +3,9 @@ import { Heart, Send, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import floralTL from "@/assets/floral-watercolor-tl.png";
-import floralBR from "@/assets/floral-watercolor-br.png";
-import outdoorGarden from "@/assets/outdoor-garden-path.jpg";
+import floralTL from "@/assets/floral-watercolor-tl.webp";
+import floralBR from "@/assets/floral-watercolor-br.webp";
+import outdoorGarden from "@/assets/outdoor-garden-path.webp";
 import FallingLeaves from "./FallingLeaves";
 
 interface Wish {
@@ -74,7 +74,7 @@ const WishesSection = () => {
       </div>
       <img src={floralTL} alt="" className="absolute top-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
       <img src={floralBR} alt="" className="absolute bottom-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
-      <FallingLeaves count={14} />
+      <FallingLeaves count={8} />
 
       <div className="container max-w-lg mx-auto px-4 relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }} className="text-center mb-8 sm:mb-12">
@@ -92,7 +92,7 @@ const WishesSection = () => {
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6 }}
           onSubmit={handleSubmit}
-          className="bg-background/80 backdrop-blur-sm rounded-lg p-5 sm:p-8 shadow-elegant space-y-4 border border-gold/20 mb-6 sm:mb-8"
+          className="bg-background/95 rounded-lg p-5 sm:p-8 shadow-elegant space-y-4 border border-gold/20 mb-6 sm:mb-8"
         >
           <div>
             <label className="font-body text-sm text-foreground mb-1.5 block">Nama</label>
@@ -113,7 +113,7 @@ const WishesSection = () => {
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
               className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-md border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition resize-none"
-              placeholder="Tuliskan ucapan dan doa untuk kedua mempelai..."
+              placeholder="Tuliskan ucapan dan doa restu Anda..."
               maxLength={500}
               disabled={submitting}
             />
@@ -137,18 +137,14 @@ const WishesSection = () => {
           ) : wishes.length === 0 ? (
             <p className="text-center font-body text-sm text-muted-foreground py-8">Jadilah yang pertama mengirimkan ucapan 🤍</p>
           ) : (
-            wishes.map((wish, index) => (
-              <motion.div
+            wishes.map((wish) => (
+              <div
                 key={wish.id}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="bg-background/70 backdrop-blur-sm rounded-lg p-4 border border-gold/15"
+                className="bg-background/90 rounded-lg p-4 border border-gold/15"
               >
                 <p className="font-body text-sm font-semibold text-gold-dark mb-1">{wish.name}</p>
                 <p className="font-body text-sm text-foreground/80 leading-relaxed">{wish.message}</p>
-              </motion.div>
+              </div>
             ))
           )}
         </div>

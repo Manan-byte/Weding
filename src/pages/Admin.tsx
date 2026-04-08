@@ -99,14 +99,19 @@ const Admin = () => {
   const getLink = useCallback((name: string) => `${baseUrl}/?to=${encodeURIComponent(name)}`, [baseUrl]);
 
   const copyLink = useCallback((name: string, index: number) => {
-    navigator.clipboard.writeText(`${baseUrl}/?to=${encodeURIComponent(name)}`);
+    const link = `${baseUrl}/?to=${encodeURIComponent(name)}`;
+    const message = `💍 *Undangan Pernikahan Irma & Manan*\n\nAssalamu'alaikum Wr. Wb.\n\nKepada Yth.\nBapak/Ibu/Saudara/i *${name}*\n\nDengan memohon rahmat Allah SWT, kami mengundang Anda untuk hadir di acara pernikahan kami.\n\n📅 10 Juni 2026\n📍 Cilacap, Jawa Tengah\n\nBuka undangan di:\n${link}\n\nMerupakan kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.\n\nWassalamu'alaikum Wr. Wb.\n_Irma & Manan_`;
+    navigator.clipboard.writeText(message);
     setCopiedIndex(index);
-    toast.success(`Link untuk ${name} berhasil disalin!`);
+    toast.success(`Pesan undangan untuk ${name} berhasil disalin!`);
     setTimeout(() => setCopiedIndex(null), 2000);
   }, [baseUrl]);
 
   const copyAll = useCallback(() => {
-    const text = guests.map((g) => `${g.name}: ${baseUrl}/?to=${encodeURIComponent(g.name)}`).join("\n");
+    const text = guests.map((g) => {
+      const link = `${baseUrl}/?to=${encodeURIComponent(g.name)}`;
+      return `*${g.name}*\n${link}`;
+    }).join("\n\n");
     navigator.clipboard.writeText(text);
     toast.success("Semua link berhasil disalin!");
   }, [guests, baseUrl]);

@@ -44,6 +44,30 @@ const EntranceCover = ({ onOpen }: EntranceCoverProps) => {
     }
   }, []);
 
+  // Attach global listeners for ANY first interaction to trigger audio
+  useEffect(() => {
+    if (audioPlaying) return;
+
+    const tryPlay = () => {
+      if (introAudioRef.current && introAudioRef.current.paused) {
+        introAudioRef.current.play()
+          .then(() => {
+            setAudioPlaying(true);
+            cleanup();
+          })
+          .catch(() => {});
+      }
+    };
+
+    const events = ["touchstart", "touchend", "mousedown", "pointerdown", "scroll", "keydown"] as const;
+    const cleanup = () => {
+      events.forEach(e => document.removeEventListener(e, tryPlay));
+    };
+    events.forEach(e => document.addEventListener(e, tryPlay, { once: true, passive: true }));
+
+    return cleanup;
+  }, [audioPlaying]);
+
   const handleOpen = () => {
     // Start intro audio if not playing (direct user gesture)
     if (introAudioRef.current && introAudioRef.current.paused) {

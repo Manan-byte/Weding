@@ -1,22 +1,27 @@
 import { memo, useMemo } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FallingLeavesProps {
   count?: number;
 }
 
 const FallingLeaves = memo(({ count = 10 }: FallingLeavesProps) => {
+  const isMobile = useIsMobile();
+  // Reduce leaf count on mobile for better performance
+  const effectiveCount = isMobile ? Math.min(count, 6) : count;
+
   const leaves = useMemo(
     () =>
-      Array.from({ length: count }, (_, i) => ({
+      Array.from({ length: effectiveCount }, (_, i) => ({
         id: i,
-        left: `${(i * (95 / count) + 2) % 100}%`,
+        left: `${(i * (95 / effectiveCount) + 2) % 100}%`,
         delay: `${(i * 1.7) % 10}s`,
         duration: `${7 + (i % 5) * 2}s`,
         size: 8 + (i % 3) * 3,
         opacity: 0.18 + (i % 4) * 0.08,
         sway: i % 2 === 0 ? "leaf-fall-left" : "leaf-fall-right",
       })),
-    [count]
+    [effectiveCount]
   );
 
   return (

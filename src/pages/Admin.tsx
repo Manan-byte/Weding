@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { Copy, Plus, Trash2, Link, Users, Check, Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,42 @@ interface Guest {
   created_at: string;
 }
 
+const GuestRow = memo(({ guest, index, baseUrl, copiedIndex, onCopy, onRemove }: {
+  guest: Guest;
+  index: number;
+  baseUrl: string;
+  copiedIndex: number | null;
+  onCopy: (name: string, index: number) => void;
+  onRemove: (guest: Guest) => void;
+}) => {
+  const link = `${baseUrl}/?to=${encodeURIComponent(guest.name)}`;
+  return (
+    <div className="flex items-center gap-2 sm:gap-3 bg-background/80 backdrop-blur-sm border border-gold/15 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 group">
+      <Link className="w-4 h-4 text-gold-dark shrink-0 hidden sm:block" />
+      <div className="flex-1 min-w-0">
+        <p className="font-body text-sm font-medium text-foreground truncate">{guest.name}</p>
+        <p className="font-body text-[10px] sm:text-xs text-muted-foreground truncate">{link}</p>
+      </div>
+      <button
+        onClick={() => onCopy(guest.name, index)}
+        className="shrink-0 p-1.5 sm:p-2 rounded-md hover:bg-gold/10 active:bg-gold/20 transition text-gold-dark"
+        title="Salin link"
+      >
+        {copiedIndex === index ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+      </button>
+      <button
+        onClick={() => onRemove(guest)}
+        className="shrink-0 p-1.5 sm:p-2 rounded-md hover:bg-destructive/10 active:bg-destructive/20 transition text-muted-foreground hover:text-destructive"
+        title="Hapus"
+      >
+        <Trash2 className="w-4 h-4" />
+      </button>
+    </div>
+  );
+});
+
+GuestRow.displayName = "GuestRow";
+
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem("admin_auth") === "true");
   const [password, setPassword] = useState("");
@@ -22,7 +58,7 @@ const Admin = () => {
 
   const baseUrl = window.location.origin;
 
-  const fetchGuests = async () => {
+  const fetchGuests = useCallback(async () => {
     const { data, error } = await supabase
       .from("guests")
       .select("*")
@@ -34,13 +70,13 @@ const Admin = () => {
       setGuests(data || []);
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (authenticated) fetchGuests();
-  }, [authenticated]);
+  }, [authenticated, fetchGuests]);
 
-  const handleLogin = () => {
+  const handleLogin = useCallback(() => {
     if (password === ADMIN_PASSWORD) {
       setAuthenticated(true);
       sessionStorage.setItem("admin_auth", "true");
@@ -48,41 +84,34 @@ const Admin = () => {
     } else {
       toast.error("Password salah!");
     }
-  };
+  }, [password]);
 
-  if (!authenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30 flex items-center justify-center px-4">
-        <div className="w-full max-w-sm bg-background/80 backdrop-blur-sm border border-gold/20 rounded-2xl p-8 text-center space-y-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gold/10 mx-auto">
-            <Lock className="w-7 h-7 text-gold-dark" />
-          </div>
-          <div>
-            <h1 className="font-script text-3xl text-foreground mb-1">Admin Panel</h1>
-            <p className="font-body text-sm text-muted-foreground">Masukkan password untuk melanjutkan</p>
-          </div>
-          <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-3">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="w-full px-4 py-3 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition text-center"
-              autoFocus
-            />
-            <button
-              type="submit"
-              className="w-full px-4 py-3 rounded-lg bg-gradient-gold text-primary-foreground font-body text-sm font-medium hover:opacity-90 transition"
-            >
-              Masuk
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  const removeGuest = useCallback(async (guest: Guest) => {
+    const { error } = await supabase.from("guests").delete().eq("id", guest.id);
+    if (error) {
+      console.error("Error removing guest:", error);
+      toast.error("Gagal menghapus tamu");
+    } else {
+      setGuests((prev) => prev.filter((g) => g.id !== guest.id));
+    }
+  }, []);
 
-  const addGuest = async () => {
+  const getLink = useCallback((name: string) => `${baseUrl}/?to=${encodeURIComponent(name)}`, [baseUrl]);
+
+  const copyLink = useCallback((name: string, index: number) => {
+    navigator.clipboard.writeText(`${baseUrl}/?to=${encodeURIComponent(name)}`);
+    setCopiedIndex(index);
+    toast.success(`Link untuk ${name} berhasil disalin!`);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  }, [baseUrl]);
+
+  const copyAll = useCallback(() => {
+    const text = guests.map((g) => `${g.name}: ${baseUrl}/?to=${encodeURIComponent(g.name)}`).join("\n");
+    navigator.clipboard.writeText(text);
+    toast.success("Semua link berhasil disalin!");
+  }, [guests, baseUrl]);
+
+  const addGuest = useCallback(async () => {
     const name = input.trim();
     if (!name) return;
     if (guests.some((g) => g.name === name)) {
@@ -105,73 +134,80 @@ const Admin = () => {
       setInput("");
     }
     setAdding(false);
-  };
+  }, [input, guests]);
 
-  const removeGuest = async (guest: Guest) => {
-    const { error } = await supabase.from("guests").delete().eq("id", guest.id);
-    if (error) {
-      console.error("Error removing guest:", error);
-      toast.error("Gagal menghapus tamu");
-    } else {
-      setGuests((prev) => prev.filter((g) => g.id !== guest.id));
-    }
-  };
-
-  const getLink = (name: string) => `${baseUrl}/?to=${encodeURIComponent(name)}`;
-
-  const copyLink = (name: string, index: number) => {
-    navigator.clipboard.writeText(getLink(name));
-    setCopiedIndex(index);
-    toast.success(`Link untuk ${name} berhasil disalin!`);
-    setTimeout(() => setCopiedIndex(null), 2000);
-  };
-
-  const copyAll = () => {
-    const text = guests.map((g) => `${g.name}: ${getLink(g.name)}`).join("\n");
-    navigator.clipboard.writeText(text);
-    toast.success("Semua link berhasil disalin!");
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       addGuest();
     }
-  };
+  }, [addGuest]);
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30 flex items-center justify-center px-4">
+        <div className="w-full max-w-sm bg-background/80 backdrop-blur-sm border border-gold/20 rounded-2xl p-6 sm:p-8 text-center space-y-5 sm:space-y-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gold/10 mx-auto">
+            <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-gold-dark" />
+          </div>
+          <div>
+            <h1 className="font-script text-2xl sm:text-3xl text-foreground mb-1">Admin Panel</h1>
+            <p className="font-body text-xs sm:text-sm text-muted-foreground">Masukkan password untuk melanjutkan</p>
+          </div>
+          <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-3">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full px-4 py-3 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition text-center"
+              autoFocus
+            />
+            <button
+              type="submit"
+              className="w-full px-4 py-3 rounded-lg bg-gradient-gold text-primary-foreground font-body text-sm font-medium hover:opacity-90 active:opacity-80 transition"
+            >
+              Masuk
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30">
-      <div className="container max-w-2xl mx-auto px-4 py-12">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-gold/10 text-gold-dark px-4 py-1.5 rounded-full text-sm font-body mb-4">
-            <Users className="w-4 h-4" />
+      <div className="container max-w-2xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-2 bg-gold/10 text-gold-dark px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-body mb-3 sm:mb-4">
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Admin Panel
           </div>
-          <h1 className="font-script text-4xl md:text-5xl text-foreground mb-2">
+          <h1 className="font-script text-3xl sm:text-4xl md:text-5xl text-foreground mb-2">
             Generate Link Undangan
           </h1>
-          <p className="font-body text-muted-foreground text-sm">
+          <p className="font-body text-muted-foreground text-xs sm:text-sm">
             Tambahkan nama tamu lalu salin link undangan personal mereka.
           </p>
         </div>
 
         {/* Input */}
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-6 sm:mb-8">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ketik nama tamu, lalu Enter..."
-            className="flex-1 px-4 py-3 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
+            placeholder="Ketik nama tamu..."
+            className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
             disabled={adding}
           />
           <button
             onClick={addGuest}
             disabled={adding}
-            className="px-4 py-3 rounded-lg bg-gradient-gold text-primary-foreground font-body text-sm font-medium hover:opacity-90 transition flex items-center gap-1.5 disabled:opacity-60"
+            className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-gradient-gold text-primary-foreground font-body text-xs sm:text-sm font-medium hover:opacity-90 active:opacity-80 transition flex items-center gap-1.5 disabled:opacity-60"
           >
             {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-            Tambah
+            <span className="hidden sm:inline">Tambah</span>
           </button>
         </div>
 
@@ -183,7 +219,7 @@ const Admin = () => {
         ) : guests.length > 0 ? (
           <>
             <div className="flex items-center justify-between mb-3">
-              <span className="font-body text-sm text-muted-foreground">
+              <span className="font-body text-xs sm:text-sm text-muted-foreground">
                 {guests.length} tamu
               </span>
               <button
@@ -191,44 +227,21 @@ const Admin = () => {
                 className="font-body text-xs text-gold-dark hover:underline flex items-center gap-1"
               >
                 <Copy className="w-3 h-3" />
-                Salin semua link
+                Salin semua
               </button>
             </div>
 
             <div className="space-y-2">
               {guests.map((guest, i) => (
-                <div
+                <GuestRow
                   key={guest.id}
-                  className="flex items-center gap-3 bg-background/80 backdrop-blur-sm border border-gold/15 rounded-lg px-4 py-3 group"
-                >
-                  <Link className="w-4 h-4 text-gold-dark shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-body text-sm font-medium text-foreground truncate">
-                      {guest.name}
-                    </p>
-                    <p className="font-body text-xs text-muted-foreground truncate">
-                      {getLink(guest.name)}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => copyLink(guest.name, i)}
-                    className="shrink-0 p-2 rounded-md hover:bg-gold/10 transition text-gold-dark"
-                    title="Salin link"
-                  >
-                    {copiedIndex === i ? (
-                      <Check className="w-4 h-4" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => removeGuest(guest)}
-                    className="shrink-0 p-2 rounded-md hover:bg-destructive/10 transition text-muted-foreground hover:text-destructive"
-                    title="Hapus"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
+                  guest={guest}
+                  index={i}
+                  baseUrl={baseUrl}
+                  copiedIndex={copiedIndex}
+                  onCopy={copyLink}
+                  onRemove={removeGuest}
+                />
               ))}
             </div>
           </>
@@ -237,7 +250,6 @@ const Admin = () => {
             Belum ada tamu. Mulai tambahkan nama di atas.
           </div>
         )}
-
       </div>
     </div>
   );

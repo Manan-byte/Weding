@@ -1,17 +1,27 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence } from "framer-motion";
-import Navigation from "@/components/wedding/Navigation";
-import HeroSection from "@/components/wedding/HeroSection";
 import EntranceCover from "@/components/wedding/EntranceCover";
+import LazyVisible from "@/components/LazyVisible";
 
-// Lazy load below-fold sections individually for better chunking
-const OurStory = lazy(() => import("@/components/wedding/OurStory"));
-const EventDetails = lazy(() => import("@/components/wedding/EventDetails"));
-const Gallery = lazy(() => import("@/components/wedding/Gallery"));
-const GiftSection = lazy(() => import("@/components/wedding/GiftSection"));
-const WishesSection = lazy(() => import("@/components/wedding/WishesSection"));
-const Footer = lazy(() => import("@/components/wedding/Footer"));
-const MusicPlayer = lazy(() => import("@/components/wedding/MusicPlayer"));
+const loadNavigation = () => import("@/components/wedding/Navigation");
+const loadHeroSection = () => import("@/components/wedding/HeroSection");
+const loadOurStory = () => import("@/components/wedding/OurStory");
+const loadEventDetails = () => import("@/components/wedding/EventDetails");
+const loadLoveQuote = () => import("@/components/wedding/LoveQuote");
+const loadGiftSection = () => import("@/components/wedding/GiftSection");
+const loadWishesSection = () => import("@/components/wedding/WishesSection");
+const loadFooter = () => import("@/components/wedding/Footer");
+const loadMusicPlayer = () => import("@/components/wedding/MusicPlayer");
+
+const Navigation = lazy(loadNavigation);
+const HeroSection = lazy(loadHeroSection);
+const OurStory = lazy(loadOurStory);
+const EventDetails = lazy(loadEventDetails);
+const LoveQuote = lazy(loadLoveQuote);
+const GiftSection = lazy(loadGiftSection);
+const WishesSection = lazy(loadWishesSection);
+const Footer = lazy(loadFooter);
+const MusicPlayer = lazy(loadMusicPlayer);
 
 const SectionFallback = () => (
   <div className="py-16 flex items-center justify-center">
@@ -19,14 +29,24 @@ const SectionFallback = () => (
   </div>
 );
 
-// Wedding invitation page
+const HeroFallback = () => <div className="min-h-[100svh] bg-background" />;
+
 const Index = () => {
   const [showCover, setShowCover] = useState(true);
   const [musicReady, setMusicReady] = useState(false);
 
-  // Always scroll to top on page load/refresh
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const warmup = window.setTimeout(() => {
+      loadNavigation();
+      loadHeroSection();
+      loadMusicPlayer();
+    }, 600);
+
+    return () => window.clearTimeout(warmup);
   }, []);
 
   const handleCoverOpen = () => {
@@ -35,35 +55,56 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[100svh]">
       <AnimatePresence>
         {showCover && <EntranceCover onOpen={handleCoverOpen} />}
       </AnimatePresence>
-      <Navigation />
-      <HeroSection />
-      <Suspense fallback={<SectionFallback />}>
-        <OurStory />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <EventDetails />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <Gallery />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <GiftSection />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <WishesSection />
-      </Suspense>
-      <Suspense fallback={<SectionFallback />}>
-        <Footer />
-      </Suspense>
-      <Suspense fallback={null}>
-        <MusicPlayer startPlaying={musicReady} />
-      </Suspense>
+
+      {!showCover && (
+        <>
+          <Suspense fallback={<HeroFallback />}>
+            <Navigation />
+            <HeroSection />
+          </Suspense>
+
+          <LazyVisible minHeight="600px">
+            <Suspense fallback={<SectionFallback />}>
+              <OurStory />
+            </Suspense>
+          </LazyVisible>
+          <LazyVisible minHeight="600px">
+            <Suspense fallback={<SectionFallback />}>
+              <EventDetails />
+            </Suspense>
+          </LazyVisible>
+          <LazyVisible minHeight="400px">
+            <Suspense fallback={<SectionFallback />}>
+              <LoveQuote />
+            </Suspense>
+          </LazyVisible>
+          <LazyVisible minHeight="400px">
+            <Suspense fallback={<SectionFallback />}>
+              <GiftSection />
+            </Suspense>
+          </LazyVisible>
+          <LazyVisible minHeight="600px">
+            <Suspense fallback={<SectionFallback />}>
+              <WishesSection />
+            </Suspense>
+          </LazyVisible>
+          <LazyVisible minHeight="200px">
+            <Suspense fallback={<SectionFallback />}>
+              <Footer />
+            </Suspense>
+          </LazyVisible>
+          <Suspense fallback={null}>
+            <MusicPlayer startPlaying={musicReady} />
+          </Suspense>
+        </>
+      )}
     </div>
   );
 };
 
 export default Index;
+

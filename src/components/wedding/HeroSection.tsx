@@ -9,7 +9,7 @@ const HeroSection = () => {
   const weddingDate = new Date("2026-06-10T08:00:00");
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
       <FallingLeaves count={10} />
       <div className="absolute inset-0">
         <img

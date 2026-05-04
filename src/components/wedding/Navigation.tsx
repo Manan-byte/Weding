@@ -5,7 +5,7 @@ import { Menu, X } from "lucide-react";
 const links = [
   { label: "Tentang Kami", href: "#story" },
   { label: "Acara", href: "#events" },
-  { label: "Galeri", href: "#gallery" },
+  { label: "Quote", href: "#gallery" },
   { label: "Hadiah", href: "#gift" },
   { label: "Ucapan", href: "#wishes" },
 ];

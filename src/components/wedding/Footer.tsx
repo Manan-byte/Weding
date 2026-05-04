@@ -7,8 +7,8 @@ import FallingLeaves from "./FallingLeaves";
 const Footer = () => {
   return (
     <footer className="relative py-10 sm:py-12 text-center overflow-hidden" style={{ background: "linear-gradient(180deg, hsl(100 20% 97%), hsl(140 35% 90% / 0.5), hsl(60 30% 94% / 0.5))" }}>
-      <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
-      <img src={floralBR} alt="" className="absolute bottom-0 right-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
+      <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 object-contain pointer-events-none opacity-70" loading="lazy" decoding="async" width={256} height={256} />
+      <img src={floralBR} alt="" className="absolute bottom-0 right-0 w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 object-contain pointer-events-none opacity-70" loading="lazy" decoding="async" width={256} height={256} />
       <FallingLeaves count={6} />
 
       <div className="container max-w-4xl mx-auto px-4">

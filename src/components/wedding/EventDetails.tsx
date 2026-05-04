@@ -35,8 +35,8 @@ const EventDetails = () => {
         <img src={outdoorReception} alt="" className="w-full h-full object-cover object-center" loading="lazy" decoding="async" width={1920} height={1080} />
         <div className="absolute inset-0 bg-background/90" />
       </div>
-      <img src={floralTR} alt="" className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-50" loading="lazy" decoding="async" width={256} height={256} />
-      <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-50" loading="lazy" decoding="async" width={256} height={256} />
+      <img src={floralTR} alt="" className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-80" loading="lazy" decoding="async" width={256} height={256} />
+      <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-80" loading="lazy" decoding="async" width={256} height={256} />
       <FallingLeaves count={8} />
 
       <div className="container max-w-5xl mx-auto px-4 relative z-10">

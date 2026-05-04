@@ -8,7 +8,7 @@ import FallingLeaves from "./FallingLeaves";
 
 const accounts = [
   { bank: "Bank Mandiri", accountNumber: "1570013500443", accountName: "Irma Damayanti Khasa" },
-  { bank: "Bank BCA", accountNumber: "1540899823", accountName: "Manan" },
+  { bank: "Bank BCA", accountNumber: "1540899823", accountName: "Abdul Manan" },
 ];
 
 const cardVariants = {
@@ -32,8 +32,8 @@ const GiftSection = () => {
 
   return (
     <section id="gift" className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(180deg, hsl(140 35% 90%) 0%, hsl(80 30% 96%) 100%)" }}>
-      <img src={floralTR} alt="" className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
-      <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-40" loading="lazy" decoding="async" width={256} height={256} />
+      <img src={floralTR} alt="" className="absolute top-0 right-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-70" loading="lazy" decoding="async" width={256} height={256} />
+      <img src={floralBL} alt="" className="absolute bottom-0 left-0 w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 object-contain pointer-events-none opacity-70" loading="lazy" decoding="async" width={256} height={256} />
       <FallingLeaves count={8} />
 
       <div className="container max-w-lg mx-auto px-4">

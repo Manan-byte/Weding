@@ -17,40 +17,43 @@ const EntranceCover = ({ onOpen }: EntranceCoverProps) => {
   const guestName = searchParams.get("to");
   const introAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
+  const ensureIntroAudio = useCallback(() => {
+    if (introAudioRef.current) return introAudioRef.current;
+
     const introAudio = new Audio("/music/cover-intro.mp3");
     introAudio.volume = 0.20;
     introAudio.loop = true;
-    introAudio.preload = "auto";
+    introAudio.preload = "none";
     introAudioRef.current = introAudio;
 
-    introAudio.play()
-      .then(() => setAudioPlaying(true))
-      .catch(() => {});
+    return introAudio;
+  }, []);
 
+  useEffect(() => {
     return () => {
-      introAudio.pause();
-      introAudio.currentTime = 0;
+      if (!introAudioRef.current) return;
+      introAudioRef.current.pause();
+      introAudioRef.current.currentTime = 0;
       introAudioRef.current = null;
     };
   }, []);
 
-  // Fallback: play on first user interaction if autoplay was blocked
   const handleCoverInteraction = useCallback(() => {
-    if (introAudioRef.current && introAudioRef.current.paused) {
-      introAudioRef.current.play()
+    const introAudio = ensureIntroAudio();
+    if (introAudio.paused) {
+      introAudio.play()
         .then(() => setAudioPlaying(true))
         .catch(() => {});
     }
-  }, []);
+  }, [ensureIntroAudio]);
 
-  // Attach global listeners for ANY first interaction to trigger audio
   useEffect(() => {
     if (audioPlaying) return;
 
     const tryPlay = () => {
-      if (introAudioRef.current && introAudioRef.current.paused) {
-        introAudioRef.current.play()
+      const introAudio = ensureIntroAudio();
+      if (introAudio.paused) {
+        introAudio.play()
           .then(() => {
             setAudioPlaying(true);
             cleanup();
@@ -61,17 +64,17 @@ const EntranceCover = ({ onOpen }: EntranceCoverProps) => {
 
     const events = ["touchstart", "touchend", "mousedown", "pointerdown", "scroll", "keydown"] as const;
     const cleanup = () => {
-      events.forEach(e => document.removeEventListener(e, tryPlay));
+      events.forEach((e) => document.removeEventListener(e, tryPlay));
     };
-    events.forEach(e => document.addEventListener(e, tryPlay, { once: true, passive: true }));
+    events.forEach((e) => document.addEventListener(e, tryPlay, { once: true, passive: true }));
 
     return cleanup;
-  }, [audioPlaying]);
+  }, [audioPlaying, ensureIntroAudio]);
 
   const handleOpen = () => {
-    // Start intro audio if not playing (direct user gesture)
-    if (introAudioRef.current && introAudioRef.current.paused) {
-      introAudioRef.current.play()
+    const introAudio = ensureIntroAudio();
+    if (introAudio.paused) {
+      introAudio.play()
         .then(() => setAudioPlaying(true))
         .catch(() => {});
     }
@@ -157,7 +160,7 @@ const EntranceCover = ({ onOpen }: EntranceCoverProps) => {
             key="content"
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.4, ease: "easeIn" }}
-            className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4"
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 py-6 overflow-y-auto landscape:max-[500px]:justify-start landscape:max-[500px]:py-4"
             onClick={handleCoverInteraction}
             onTouchStart={handleCoverInteraction}
           >

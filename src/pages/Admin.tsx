@@ -407,7 +407,7 @@ const Admin = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4"
+            className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4 landscape:max-[900px]:items-center landscape:max-[900px]:p-2"
             onClick={() => setPreviewName(null)}
           >
             <motion.div
@@ -416,7 +416,7 @@ const Admin = () => {
               exit={{ y: 40, opacity: 0, scale: 0.98 }}
               transition={{ type: "spring", damping: 26, stiffness: 280 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full sm:max-w-md bg-[#ECE5DD] rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+              className="w-full sm:max-w-md bg-[#ECE5DD] rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90svh] landscape:max-[900px]:max-h-[95svh] landscape:max-[900px]:max-w-[560px] landscape:max-[900px]:rounded-2xl"
             >
               {/* WA-style header */}
               <div className="flex items-center gap-3 px-4 py-3 bg-[#075E54] text-white">

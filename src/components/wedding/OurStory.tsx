@@ -156,7 +156,10 @@ const OurStory = () => {
             className="space-y-6 sm:space-y-8"
           >
             <motion.div variants={slideUp} transition={{ duration: 0.7 }} className="text-center md:text-left">
-              <h3 className="font-script text-3xl sm:text-4xl text-gold-dark mb-1">Irma Damayanti Khasanah</h3>
+              <h3 className="font-script text-3xl sm:text-4xl text-gold-dark mb-2">Irma Damayanti Khasanah</h3>
+              <p className="font-body text-xs sm:text-sm text-foreground/80 mb-2 italic">
+                Putri dari Bapak Admin &amp; Ibu Mujiroh
+              </p>
               <p className="font-body text-sm text-muted-foreground">Lahir 08 Januari 1999</p>
               <p className="font-body text-sm text-sage-green-deep">Cipari, Cilacap</p>
             </motion.div>
@@ -168,7 +171,10 @@ const OurStory = () => {
             </motion.div>
 
             <motion.div variants={slideUp} transition={{ duration: 0.7 }} className="text-center md:text-left">
-              <h3 className="font-script text-3xl sm:text-4xl text-gold-dark mb-1">Abdul Manan</h3>
+              <h3 className="font-script text-3xl sm:text-4xl text-gold-dark mb-2">Abdul Manan</h3>
+              <p className="font-body text-xs sm:text-sm text-foreground/80 mb-2 italic">
+                Putra dari (Alm) Bapak Irwanto &amp; Ibu Karmiyanti
+              </p>
               <p className="font-body text-sm text-muted-foreground">Lahir 05 Agustus 1997</p>
               <p className="font-body text-sm text-sage-green-deep">Bebengan Kertosari, Kab. Temanggung</p>
             </motion.div>

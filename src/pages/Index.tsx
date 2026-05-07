@@ -1,27 +1,27 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence } from "framer-motion";
-import Navigation from "@/components/wedding/Navigation";
-import HeroSection from "@/components/wedding/HeroSection";
 import EntranceCover from "@/components/wedding/EntranceCover";
+import LazyVisible from "@/components/LazyVisible";
 
-// Lazy load below-fold sections individually for better chunking.
-// Imports are exposed as functions so we can also call them eagerly for
-// preloading while the EntranceCover is visible.
-const importOurStory = () => import("@/components/wedding/OurStory");
-const importEventDetails = () => import("@/components/wedding/EventDetails");
-const importLoveQuote = () => import("@/components/wedding/LoveQuote");
-const importGiftSection = () => import("@/components/wedding/GiftSection");
-const importWishesSection = () => import("@/components/wedding/WishesSection");
-const importFooter = () => import("@/components/wedding/Footer");
-const importMusicPlayer = () => import("@/components/wedding/MusicPlayer");
+const loadNavigation = () => import("@/components/wedding/Navigation");
+const loadHeroSection = () => import("@/components/wedding/HeroSection");
+const loadOurStory = () => import("@/components/wedding/OurStory");
+const loadEventDetails = () => import("@/components/wedding/EventDetails");
+const loadLoveQuote = () => import("@/components/wedding/LoveQuote");
+const loadGiftSection = () => import("@/components/wedding/GiftSection");
+const loadWishesSection = () => import("@/components/wedding/WishesSection");
+const loadFooter = () => import("@/components/wedding/Footer");
+const loadMusicPlayer = () => import("@/components/wedding/MusicPlayer");
 
-const OurStory = lazy(importOurStory);
-const EventDetails = lazy(importEventDetails);
-const LoveQuote = lazy(importLoveQuote);
-const GiftSection = lazy(importGiftSection);
-const WishesSection = lazy(importWishesSection);
-const Footer = lazy(importFooter);
-const MusicPlayer = lazy(importMusicPlayer);
+const Navigation = lazy(loadNavigation);
+const HeroSection = lazy(loadHeroSection);
+const OurStory = lazy(loadOurStory);
+const EventDetails = lazy(loadEventDetails);
+const LoveQuote = lazy(loadLoveQuote);
+const GiftSection = lazy(loadGiftSection);
+const WishesSection = lazy(loadWishesSection);
+const Footer = lazy(loadFooter);
+const MusicPlayer = lazy(loadMusicPlayer);
 
 const SectionFallback = () => (
   <div className="py-16 flex items-center justify-center">
@@ -29,28 +29,24 @@ const SectionFallback = () => (
   </div>
 );
 
-// Wedding invitation page
+const HeroFallback = () => <div className="min-h-[100svh] bg-background" />;
+
 const Index = () => {
   const [showCover, setShowCover] = useState(true);
   const [musicReady, setMusicReady] = useState(false);
 
-  // Always scroll to top on page load/refresh, and eagerly preload every
-  // lazy section + the music player chunk while the EntranceCover is still
-  // showing. By the time the user clicks "Buka Kabar Bahagia" all chunks
-  // are already in memory, so no <SectionFallback /> spinner is shown.
   useEffect(() => {
     window.scrollTo(0, 0);
-    Promise.all([
-      importOurStory(),
-      importEventDetails(),
-      importLoveQuote(),
-      importGiftSection(),
-      importWishesSection(),
-      importFooter(),
-      importMusicPlayer(),
-    ]).catch(() => {
-      /* preload errors are non-fatal; Suspense will retry on render */
-    });
+  }, []);
+
+  useEffect(() => {
+    const warmup = window.setTimeout(() => {
+      loadNavigation();
+      loadHeroSection();
+      loadMusicPlayer();
+    }, 600);
+
+    return () => window.clearTimeout(warmup);
   }, []);
 
   const handleCoverOpen = () => {

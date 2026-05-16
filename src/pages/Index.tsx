@@ -23,12 +23,7 @@ const WishesSection = lazy(loadWishesSection);
 const Footer = lazy(loadFooter);
 const MusicPlayer = lazy(loadMusicPlayer);
 
-const SectionFallback = () => (
-  <div className="py-16 flex items-center justify-center">
-    <div className="w-8 h-8 border-2 border-gold/30 border-t-gold-dark rounded-full animate-spin" />
-  </div>
-);
-
+const SectionFallback = () => null;
 const HeroFallback = () => <div className="min-h-[100svh] bg-background" />;
 
 const Index = () => {
@@ -37,16 +32,12 @@ const Index = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
-
-  useEffect(() => {
-    const warmup = window.setTimeout(() => {
-      loadNavigation();
-      loadHeroSection();
-      loadMusicPlayer();
-    }, 600);
-
-    return () => window.clearTimeout(warmup);
+    // Preload above-the-fold chunks immediately so no loading flash appears
+    // when the user opens the cover.
+    loadNavigation();
+    loadHeroSection();
+    loadOurStory();
+    loadMusicPlayer();
   }, []);
 
   const handleCoverOpen = () => {

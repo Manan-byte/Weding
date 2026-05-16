@@ -23,7 +23,7 @@ const EntranceCover = ({ onOpen }: EntranceCoverProps) => {
     const introAudio = new Audio("/music/cover-intro.mp3");
     introAudio.volume = 0.20;
     introAudio.loop = true;
-    introAudio.preload = "none";
+    introAudio.preload = "auto";
     introAudioRef.current = introAudio;
 
     return introAudio;
@@ -50,23 +50,66 @@ const EntranceCover = ({ onOpen }: EntranceCoverProps) => {
   useEffect(() => {
     if (audioPlaying) return;
 
+    let cancelled = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartT = 0;
+
     const tryPlay = () => {
+      if (cancelled) return;
       const introAudio = ensureIntroAudio();
-      if (introAudio.paused) {
-        introAudio.play()
-          .then(() => {
-            setAudioPlaying(true);
-            cleanup();
-          })
-          .catch(() => {});
+      if (!introAudio.paused) return;
+      introAudio.play()
+        .then(() => {
+          if (cancelled) return;
+          setAudioPlaying(true);
+          cleanup();
+        })
+        .catch(() => {});
+    };
+
+    // Track touch start so we can ignore swipes/scrolls and only act on real taps.
+    const onTouchStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      if (!t) return;
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchStartT = Date.now();
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      const t = e.changedTouches[0];
+      if (!t) return;
+      const dx = Math.abs(t.clientX - touchStartX);
+      const dy = Math.abs(t.clientY - touchStartY);
+      const dt = Date.now() - touchStartT;
+
+      // Scale movement threshold to device size so it feels consistent
+      // on small phones and large tablets. ~1.2% of the smaller viewport
+      // edge, clamped to a sane range (6–14 px).
+      const minEdge = Math.min(window.innerWidth, window.innerHeight);
+      const moveThreshold = Math.max(6, Math.min(14, minEdge * 0.012));
+
+      // Real tap = quick (<= 250ms) + minimal movement on both axes.
+      if (dt <= 250 && dx <= moveThreshold && dy <= moveThreshold) {
+        tryPlay();
       }
     };
 
-    const events = ["touchstart", "touchend", "mousedown", "pointerdown", "scroll", "keydown"] as const;
+    const onClick = () => tryPlay();
+    const onKeyDown = () => tryPlay();
+
     const cleanup = () => {
-      events.forEach((e) => document.removeEventListener(e, tryPlay));
+      cancelled = true;
+      document.removeEventListener("touchstart", onTouchStart);
+      document.removeEventListener("touchend", onTouchEnd);
+      document.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKeyDown);
     };
-    events.forEach((e) => document.addEventListener(e, tryPlay, { once: true, passive: true }));
+
+    document.addEventListener("touchstart", onTouchStart, { passive: true });
+    document.addEventListener("touchend", onTouchEnd, { passive: true });
+    document.addEventListener("click", onClick, { passive: true });
+    document.addEventListener("keydown", onKeyDown, { passive: true });
 
     return cleanup;
   }, [audioPlaying, ensureIntroAudio]);
@@ -280,6 +323,34 @@ const EntranceCover = ({ onOpen }: EntranceCoverProps) => {
             >
               Buka Kabar Bahagia
             </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Small "preparing" indicator after button click — dots + text, no spinner */}
+      <AnimatePresence>
+        {phase === "opening" && (
+          <motion.div
+            key="preparing"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 pointer-events-none"
+          >
+            <span className="font-body text-[10px] sm:text-xs tracking-[0.25em] uppercase text-gold-dark/80">
+              Menyiapkan halaman
+            </span>
+            <span className="flex items-center gap-1">
+              {[0, 0.2, 0.4].map((delay, i) => (
+                <motion.span
+                  key={i}
+                  className="w-1 h-1 rounded-full bg-gold-dark/70"
+                  animate={{ opacity: [0.3, 1, 0.3] }}
+                  transition={{ duration: 1, repeat: Infinity, delay, ease: "easeInOut" }}
+                />
+              ))}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>

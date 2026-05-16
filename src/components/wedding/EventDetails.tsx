@@ -10,7 +10,7 @@ const MAPS_URL = "https://www.google.com/maps/dir/?api=1&destination=-7.44745445
 
 const event = {
   title: "Akad Nikah",
-  subtitle: "Ijab Kabul di KUA",
+  subtitle: "KUA CIPARI",
   date: "10 Juni 2026",
   time: "08.00 - 10.00 WIB",
   venue: VENUE_ADDRESS,

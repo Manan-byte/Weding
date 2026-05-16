@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, memo } from "react";
-import { Copy, Plus, Trash2, Link, Users, Check, Loader2, Lock, MessageSquareHeart, Send, Eye, X } from "lucide-react";
+import { Copy, Plus, Trash2, Link, Users, Check, Loader2, Lock, MessageSquareHeart, Send, Eye, X, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 const ADMIN_PASSWORD = "manan";
+const PAGE_SIZE = 10;
 
 interface Guest {
   id: string;
@@ -85,7 +86,33 @@ const Admin = () => {
   const [removingWishId, setRemovingWishId] = useState<string | null>(null);
   const [previewName, setPreviewName] = useState<string | null>(null);
 
+  // 🔎 Search + Pagination state
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [wishSearch, setWishSearch] = useState("");
+  const [wishPage, setWishPage] = useState(1);
+
   const baseUrl = window.location.origin;
+
+  // ---- Filter + paging derivations ----
+  const filteredGuests = guests.filter((g) =>
+    g.name.toLowerCase().includes(search.trim().toLowerCase())
+  );
+  const totalPages = Math.max(1, Math.ceil(filteredGuests.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedGuests = filteredGuests.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const filteredWishes = wishes.filter((w) => {
+    const q = wishSearch.trim().toLowerCase();
+    if (!q) return true;
+    return w.name.toLowerCase().includes(q) || w.message.toLowerCase().includes(q);
+  });
+  const wishTotalPages = Math.max(1, Math.ceil(filteredWishes.length / PAGE_SIZE));
+  const wishCurrentPage = Math.min(wishPage, wishTotalPages);
+  const pagedWishes = filteredWishes.slice((wishCurrentPage - 1) * PAGE_SIZE, wishCurrentPage * PAGE_SIZE);
+
+  useEffect(() => { setPage(1); }, [search]);
+  useEffect(() => { setWishPage(1); }, [wishSearch]);
 
   const fetchGuests = useCallback(async () => {
     const { data, error } = await supabase
@@ -158,11 +185,9 @@ const Admin = () => {
     }
   }, []);
 
-  const getLink = useCallback((name: string) => `${baseUrl}/?to=${encodeURIComponent(name)}`, [baseUrl]);
-
   const buildMessage = useCallback((name: string) => {
     const link = `${baseUrl}/?to=${encodeURIComponent(name)}`;
-     return `*Kabar Bahagia & Mohon Doa Restu*\n🌿 _Irma & Manan_\n\nAssalamu'alaikum Warahmatullahi Wabarakatuh.\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*${name}*\ndi tempat\n\nDengan memohon rahmat dan ridha Allah Subhanahu wa Ta'ala, perkenankan kami menyampaikan kabar bahagia atas rencana pernikahan kami yang insyaAllah akan dilaksanakan pada:\n\n🗓️ *Rabu, 10 Juni 2026*\n🕌 *KUA Kec. Cipari, Kab. Cilacap, Jawa Tengah*\n\nDikarenakan keterbatasan, acara hanya dihadiri oleh keluarga inti. Tanpa mengurangi rasa hormat, kami memohon doa restu agar pernikahan kami senantiasa diberkahi.\n\nInfo selengkapnya dapat dilihat melalui tautan:\n${link}\n\nAtas perhatian dan doa restunya, kami ucapkan terima kasih.\n\nJazakumullahu khairan katsiran.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.\n\nHormat kami,\n_Irma & Manan beserta keluarga_`;
+    return `*Kabar Bahagia & Mohon Doa Restu*\n🌿 _Irma & Manan_\n\nAssalamu'alaikum Warahmatullahi Wabarakatuh.\n\nKepada Yth.\nBapak/Ibu/Saudara/i\n*${name}*\ndi tempat\n\nDengan memohon rahmat dan ridha Allah Subhanahu wa Ta'ala, perkenankan kami menyampaikan kabar bahagia atas rencana pernikahan kami yang insyaAllah akan dilaksanakan pada:\n\n🗓️ *Rabu, 10 Juni 2026*\n🕌 *KUA Kec. Cipari, Kab. Cilacap, Jawa Tengah*\n\nDikarenakan keterbatasan, acara hanya dihadiri oleh keluarga inti. Tanpa mengurangi rasa hormat, kami memohon doa restu agar pernikahan kami senantiasa diberkahi.\n\nInfo selengkapnya dapat dilihat melalui tautan:\n${link}\n\nAtas perhatian dan doa restunya, kami ucapkan terima kasih.\n\nJazakumullahu khairan katsiran.\nWassalamu'alaikum Warahmatullahi Wabarakatuh.\n\nHormat kami,\n_Irma & Manan beserta keluarga_`;
   }, [baseUrl]);
 
   const copyLink = useCallback((name: string, index: number) => {
@@ -220,7 +245,7 @@ const Admin = () => {
 
   if (!authenticated) {
     return (
-      <div className="min-h-[100svh] bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30 flex items-center justify-center px-4">
         <div className="w-full max-w-sm bg-background/95 border border-gold/20 rounded-2xl p-6 sm:p-8 text-center space-y-5 sm:space-y-6">
           <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gold/10 mx-auto">
             <Lock className="w-6 h-6 sm:w-7 sm:h-7 text-gold-dark" />
@@ -251,7 +276,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-[100svh] bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30">
+    <div className="min-h-screen bg-gradient-to-b from-sky-blue-light/30 to-blush-light/30">
       <div className="container max-w-2xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
         <div className="text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 bg-gold/10 text-gold-dark px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-body mb-3 sm:mb-4">
@@ -284,8 +309,8 @@ const Admin = () => {
 
         {tab === "guests" ? (
           <>
-            {/* Input */}
-            <div className="flex gap-2 mb-6 sm:mb-8">
+            {/* Input tambah nama */}
+            <div className="flex gap-2 mb-4">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -311,9 +336,20 @@ const Admin = () => {
               </div>
             ) : guests.length > 0 ? (
               <>
+                {/* 🔎 Search */}
+                <div className="relative mb-3">
+                  <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Cari nama tamu..."
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
+                  />
+                </div>
+
                 <div className="flex items-center justify-between mb-3">
                   <span className="font-body text-xs sm:text-sm text-muted-foreground">
-                    {guests.length} penerima
+                    {filteredGuests.length} dari {guests.length} penerima
                   </span>
                   <button
                     onClick={copyAll}
@@ -325,11 +361,15 @@ const Admin = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {guests.map((guest, i) => (
+                  {pagedGuests.length === 0 ? (
+                    <div className="text-center py-10 text-muted-foreground font-body text-sm">
+                      Tidak ada hasil pencarian.
+                    </div>
+                  ) : pagedGuests.map((guest, i) => (
                     <GuestRow
                       key={guest.id}
                       guest={guest}
-                      index={i}
+                      index={(currentPage - 1) * PAGE_SIZE + i}
                       baseUrl={baseUrl}
                       copiedIndex={copiedIndex}
                       onCopy={copyLink}
@@ -339,6 +379,29 @@ const Admin = () => {
                     />
                   ))}
                 </div>
+
+                {/* 📄 Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between gap-2 mt-5">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gold/20 bg-background/95 font-body text-xs sm:text-sm text-foreground hover:bg-gold/10 active:bg-gold/20 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <ChevronLeft className="w-4 h-4" /> Sebelumnya
+                    </button>
+                    <span className="font-body text-xs sm:text-sm text-muted-foreground">
+                      Halaman {currentPage} / {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gold/20 bg-background/95 font-body text-xs sm:text-sm text-foreground hover:bg-gold/10 active:bg-gold/20 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Berikutnya <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <div className="text-center py-16 text-muted-foreground font-body text-sm">
@@ -348,9 +411,20 @@ const Admin = () => {
           </>
         ) : (
           <>
+            {/* 🔎 Search ucapan */}
+            <div className="relative mb-3">
+              <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                value={wishSearch}
+                onChange={(e) => setWishSearch(e.target.value)}
+                placeholder="Cari nama atau isi ucapan..."
+                className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-border bg-background font-body text-sm focus:outline-none focus:ring-2 focus:ring-gold/40 transition"
+              />
+            </div>
+
             <div className="flex items-center justify-between mb-3">
               <span className="font-body text-xs sm:text-sm text-muted-foreground">
-                {wishes.length} ucapan
+                {filteredWishes.length} dari {wishes.length} ucapan
               </span>
               <button
                 onClick={fetchWishes}
@@ -368,9 +442,13 @@ const Admin = () => {
               <div className="text-center py-16 text-muted-foreground font-body text-sm">
                 Belum ada ucapan masuk.
               </div>
+            ) : pagedWishes.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground font-body text-sm">
+                Tidak ada hasil pencarian.
+              </div>
             ) : (
               <div className="space-y-2">
-                {wishes.map((wish) => (
+                {pagedWishes.map((wish) => (
                   <div
                     key={wish.id}
                     className="bg-background/95 border border-gold/15 rounded-lg px-3 sm:px-4 py-3"
@@ -396,18 +474,41 @@ const Admin = () => {
                 ))}
               </div>
             )}
+
+            {/* 📄 Pagination ucapan */}
+            {wishTotalPages > 1 && !wishesLoading && (
+              <div className="flex items-center justify-between gap-2 mt-5">
+                <button
+                  onClick={() => setWishPage((p) => Math.max(1, p - 1))}
+                  disabled={wishCurrentPage === 1}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gold/20 bg-background/95 font-body text-xs sm:text-sm text-foreground hover:bg-gold/10 active:bg-gold/20 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Sebelumnya
+                </button>
+                <span className="font-body text-xs sm:text-sm text-muted-foreground">
+                  Halaman {wishCurrentPage} / {wishTotalPages}
+                </span>
+                <button
+                  onClick={() => setWishPage((p) => Math.min(wishTotalPages, p + 1))}
+                  disabled={wishCurrentPage === wishTotalPages}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg border border-gold/20 bg-background/95 font-body text-xs sm:text-sm text-foreground hover:bg-gold/10 active:bg-gold/20 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Berikutnya <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
 
+      {/* WA-style preview modal */}
       <AnimatePresence>
         {previewName && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4 landscape:max-[900px]:items-center landscape:max-[900px]:p-2"
+            className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center px-0 sm:px-4"
             onClick={() => setPreviewName(null)}
           >
             <motion.div
@@ -418,49 +519,40 @@ const Admin = () => {
               onClick={(e) => e.stopPropagation()}
               className="w-full sm:max-w-md bg-[#ECE5DD] rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90svh] landscape:max-[900px]:max-h-[95svh] landscape:max-[900px]:max-w-[560px] landscape:max-[900px]:rounded-2xl"
             >
-              {/* WA-style header */}
+              {/* WA header */}
               <div className="flex items-center gap-3 px-4 py-3 bg-[#075E54] text-white">
-                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-body text-sm font-semibold uppercase">
+                <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-semibold text-sm">
                   {previewName.charAt(0)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-body text-sm font-semibold truncate">{previewName}</p>
-                  <p className="font-body text-[11px] text-white/70">Preview pesan WhatsApp</p>
+                  <p className="font-body text-sm font-medium truncate">{previewName}</p>
+                  <p className="font-body text-[10px] text-white/70">Preview pesan WhatsApp</p>
                 </div>
                 <button
                   onClick={() => setPreviewName(null)}
                   className="p-1.5 rounded-full hover:bg-white/10 active:bg-white/20 transition"
                   title="Tutup"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Chat area */}
-              <div
-                className="flex-1 overflow-y-auto p-4 bg-[#ECE5DD]"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0)",
-                  backgroundSize: "16px 16px",
-                }}
-              >
-                <div className="ml-auto max-w-[88%] bg-[#DCF8C6] rounded-lg rounded-tr-sm px-3 py-2 shadow-sm">
-                  <p className="font-body text-[13px] text-[#1f2937] whitespace-pre-wrap leading-relaxed">
+              <div className="flex-1 overflow-y-auto px-3 py-4 bg-[#ECE5DD]">
+                <div className="bg-[#DCF8C6] rounded-lg rounded-tr-sm px-3 py-2 ml-auto max-w-[90%] shadow-sm">
+                  <p className="font-body text-[13px] text-foreground/90 whitespace-pre-wrap leading-relaxed">
                     {buildMessage(previewName)}
                   </p>
-                  <p className="text-right text-[10px] text-[#667781] mt-1">
+                  <p className="text-[10px] text-muted-foreground text-right mt-1">
                     {new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })} ✓✓
                   </p>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2 p-3 bg-background border-t border-gold/15">
+              <div className="flex gap-2 p-3 bg-background border-t border-border">
                 <button
-                  onClick={() => {
-                    copyLink(previewName, -1);
-                  }}
+                  onClick={() => copyLink(previewName, -1)}
                   className="flex-1 px-3 py-2.5 rounded-lg border border-gold/30 text-gold-dark font-body text-sm font-medium hover:bg-gold/10 transition flex items-center justify-center gap-1.5"
                 >
                   <Copy className="w-4 h-4" /> Salin

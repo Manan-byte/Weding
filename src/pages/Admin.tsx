@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, memo } from "react";
-import { Copy, Plus, Trash2, Link, Users, Check, Loader2, Lock, MessageSquareHeart, Send, Eye, X, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Copy, Plus, Trash2, Link, Users, Check, Loader2, Lock, MessageSquareHeart, Send, Eye, X, Search, SearchX, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,27 +86,41 @@ const Admin = () => {
   const [removingWishId, setRemovingWishId] = useState<string | null>(null);
   const [previewName, setPreviewName] = useState<string | null>(null);
 
-  // 🔎 Search + Pagination state
+  // 🔎 Search + Pagination + Sort state
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [guestSortAsc, setGuestSortAsc] = useState(true);
   const [wishSearch, setWishSearch] = useState("");
   const [wishPage, setWishPage] = useState(1);
+  const [wishSortAsc, setWishSortAsc] = useState(true);
 
   const baseUrl = window.location.origin;
 
   // ---- Filter + paging derivations ----
-  const filteredGuests = guests.filter((g) =>
-    g.name.toLowerCase().includes(search.trim().toLowerCase())
-  );
+  const filteredGuests = guests
+    .filter((g) =>
+      g.name.toLowerCase().includes(search.trim().toLowerCase())
+    )
+    .sort((a, b) =>
+      guestSortAsc
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name)
+    );
   const totalPages = Math.max(1, Math.ceil(filteredGuests.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const pagedGuests = filteredGuests.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const filteredWishes = wishes.filter((w) => {
-    const q = wishSearch.trim().toLowerCase();
-    if (!q) return true;
-    return w.name.toLowerCase().includes(q) || w.message.toLowerCase().includes(q);
-  });
+  const filteredWishes = wishes
+    .filter((w) => {
+      const q = wishSearch.trim().toLowerCase();
+      if (!q) return true;
+      return w.name.toLowerCase().includes(q) || w.message.toLowerCase().includes(q);
+    })
+    .sort((a, b) =>
+      wishSortAsc
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name)
+    );
   const wishTotalPages = Math.max(1, Math.ceil(filteredWishes.length / PAGE_SIZE));
   const wishCurrentPage = Math.min(wishPage, wishTotalPages);
   const pagedWishes = filteredWishes.slice((wishCurrentPage - 1) * PAGE_SIZE, wishCurrentPage * PAGE_SIZE);
@@ -331,8 +345,9 @@ const Admin = () => {
 
             {/* Guest list */}
             {loading ? (
-              <div className="flex justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-gold-dark" />
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-gold-dark" />
+                <p className="font-body text-sm text-muted-foreground">Memuat data tamu...</p>
               </div>
             ) : guests.length > 0 ? (
               <>
@@ -351,19 +366,31 @@ const Admin = () => {
                   <span className="font-body text-xs sm:text-sm text-muted-foreground">
                     {filteredGuests.length} dari {guests.length} penerima
                   </span>
-                  <button
-                    onClick={copyAll}
-                    className="font-body text-xs text-gold-dark hover:underline flex items-center gap-1"
-                  >
-                    <Copy className="w-3 h-3" />
-                    Salin semua
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setGuestSortAsc((v) => !v)}
+                      className="font-body text-xs text-muted-foreground hover:text-gold-dark flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gold/10 transition"
+                      title={guestSortAsc ? "Urutkan Z-A" : "Urutkan A-Z"}
+                    >
+                      <ArrowUpDown className="w-3 h-3" />
+                      {guestSortAsc ? "A-Z" : "Z-A"}
+                    </button>
+                    <button
+                      onClick={copyAll}
+                      className="font-body text-xs text-gold-dark hover:underline flex items-center gap-1"
+                    >
+                      <Copy className="w-3 h-3" />
+                      Salin semua
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   {pagedGuests.length === 0 ? (
-                    <div className="text-center py-10 text-muted-foreground font-body text-sm">
-                      Tidak ada hasil pencarian.
+                    <div className="flex flex-col items-center justify-center py-14 gap-3 text-muted-foreground">
+                      <SearchX className="w-10 h-10 text-gold/40" />
+                      <p className="font-body text-sm">Tidak ada hasil pencarian</p>
+                      <p className="font-body text-xs">Coba kata kunci lain</p>
                     </div>
                   ) : pagedGuests.map((guest, i) => (
                     <GuestRow
@@ -404,8 +431,10 @@ const Admin = () => {
                 )}
               </>
             ) : (
-              <div className="text-center py-16 text-muted-foreground font-body text-sm">
-                Belum ada penerima. Mulai tambahkan nama di atas.
+              <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+                <Users className="w-10 h-10 text-gold/40" />
+                <p className="font-body text-sm">Belum ada penerima</p>
+                <p className="font-body text-xs">Mulai tambahkan nama di atas</p>
               </div>
             )}
           </>
@@ -426,25 +455,40 @@ const Admin = () => {
               <span className="font-body text-xs sm:text-sm text-muted-foreground">
                 {filteredWishes.length} dari {wishes.length} ucapan
               </span>
-              <button
-                onClick={fetchWishes}
-                className="font-body text-xs text-gold-dark hover:underline"
-              >
-                Muat ulang
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setWishSortAsc((v) => !v)}
+                  className="font-body text-xs text-muted-foreground hover:text-gold-dark flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gold/10 transition"
+                  title={wishSortAsc ? "Urutkan Z-A" : "Urutkan A-Z"}
+                >
+                  <ArrowUpDown className="w-3 h-3" />
+                  {wishSortAsc ? "A-Z" : "Z-A"}
+                </button>
+                <button
+                  onClick={fetchWishes}
+                  className="font-body text-xs text-gold-dark hover:underline"
+                >
+                  Muat ulang
+                </button>
+              </div>
             </div>
 
             {wishesLoading ? (
-              <div className="flex justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-gold-dark" />
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-gold-dark" />
+                <p className="font-body text-sm text-muted-foreground">Memuat ucapan...</p>
               </div>
             ) : wishes.length === 0 ? (
-              <div className="text-center py-16 text-muted-foreground font-body text-sm">
-                Belum ada ucapan masuk.
+              <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+                <MessageSquareHeart className="w-10 h-10 text-gold/40" />
+                <p className="font-body text-sm">Belum ada ucapan masuk</p>
+                <p className="font-body text-xs">Doa dan ucapan akan muncul di sini</p>
               </div>
             ) : pagedWishes.length === 0 ? (
-              <div className="text-center py-16 text-muted-foreground font-body text-sm">
-                Tidak ada hasil pencarian.
+              <div className="flex flex-col items-center justify-center py-14 gap-3 text-muted-foreground">
+                <SearchX className="w-10 h-10 text-gold/40" />
+                <p className="font-body text-sm">Tidak ada hasil pencarian</p>
+                <p className="font-body text-xs">Coba kata kunci lain</p>
               </div>
             ) : (
               <div className="space-y-2">

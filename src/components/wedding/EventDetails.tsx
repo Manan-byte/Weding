@@ -98,7 +98,7 @@ const EventDetails = () => {
           </div>
           <div className="rounded-lg overflow-hidden shadow-elegant border border-gold/20">
             <iframe
-              src="https://maps.google.com/maps?q=KUA+Kecamatan+Cipari@-7.4393798,108.7637422&z=16&output=embed"
+              src="https://www.google.com/maps?q=Jl.%20Jend.%20A.%20Yani%20No.%2025%20RT%2003%20RW%2003%20Krisik%20Cipari%20Cilacap%20Jawa%20Tengah&output=embed"
               width="100%"
               height="280"
               style={{ border: 0 }}

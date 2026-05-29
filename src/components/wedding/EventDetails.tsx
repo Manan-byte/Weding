@@ -5,8 +5,8 @@ import floralBL from "@/assets/floral-watercolor-bl.webp";
 import outdoorReception from "@/assets/outdoor-wedding-reception.webp";
 import FallingLeaves from "./FallingLeaves";
 
-const VENUE_ADDRESS = "Jl. Jend. A. Yani No. 25, RT 03/RW 03, Krisik, Kec. Cipari, Kab. Cilacap, Jawa Tengah";
-const MAPS_URL = "https://www.google.com/maps/dir/?api=1&destination=-7.447454452514648,108.7685546875&travelmode=driving";
+const VENUE_ADDRESS = "Jl. Banyupanas No.17, Cipari, Kec. Cipari, Kabupaten Cilacap, Jawa Tengah 53262";
+const MAPS_URL = "https://maps.app.goo.gl/h8JjgYjDmVuxgxhV9";
 
 const event = {
   title: "Akad Nikah",

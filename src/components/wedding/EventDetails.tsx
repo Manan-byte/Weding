@@ -98,7 +98,7 @@ const EventDetails = () => {
           </div>
           <div className="rounded-lg overflow-hidden shadow-elegant border border-gold/20">
             <iframe
-              src="https://maps.google.com/maps?q=KUA+Kecamatan+Cipari@-7.4393798,108.7637422&z=16&output=embed"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5774.6588217944!2d108.76116727645095!3d-7.439374473302988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e65819f0d0a9385%3A0x86b28de0964bc332!2sKUA%20Kecamatan%20Cipari!5e1!3m2!1sen!2sid!4v1780026909087!5m2!1sen!2sid"
               width="100%"
               height="280"
               style={{ border: 0 }}

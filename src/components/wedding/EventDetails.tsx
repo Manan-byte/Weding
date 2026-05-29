@@ -98,7 +98,7 @@ const EventDetails = () => {
           </div>
           <div className="rounded-lg overflow-hidden shadow-elegant border border-gold/20">
             <iframe
-              src="https://maps.app.goo.gl/h8JjgYjDmVuxgxhV9output=embed"
+              src="https://maps.app.goo.gl/h8JjgYjDmVuxgxhV9"
               width="100%"
               height="280"
               style={{ border: 0 }}

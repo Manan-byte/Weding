@@ -1,6 +1,6 @@
-# 💍 Undangan Pernikahan Digital — Irma & Manan
+# 💍 Interactive Digital Wedding Invitation — Irma & Manan
 
-> **Website Undangan Pernikahan Digital Interaktif & Elegan** dengan fitur RSVP real-time, Countdown waktu akad, Kisah cinta, dan Integrasi Lokasi Acara.
+> **Responsive Digital Wedding Invitation Platform** featuring real-time countdown, RSVP confirmations, story timeline, and venue mapping.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-irma--manan.netlify.app-00C7B7?style=flat-square&logo=netlify&logoColor=white)](https://irma-manan.netlify.app/)
 [![React](https://img.shields.io/badge/React-18-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
@@ -10,32 +10,16 @@
 
 ---
 
-## ✨ Fitur Interaktif
+## ✨ Features
 
-- ⏱️ **Countdown Timer**: Penghitung mundur otomatis menuju hari bahagia pernikahan.
-- 💌 **RSVP & Buku Tamu Digital**: Memudahkan konfirmasi kehadiran para tamu dan kiriman doa restu.
-- 📍 **Peta Lokasi & Navigasi**: Panduan rute Google Maps langsung menuju lokasi acara di KUA Kec. Cipari, Cilacap.
-- 🎵 **Audio Player Musik Latar**: Pemutar musik romantis yang nyaman dengan kontrol play/pause interaktif.
-- 🖼️ **Galeri Foto Responsif**: Tampilan galeri foto berkualitas tinggi dengan transisi halus.
-
----
-
-## 🌐 Kunjungi Website
-
-Undangan live dapat diakses langsung di: **[https://irma-manan.netlify.app/](https://irma-manan.netlify.app/)**
+- ⏱️ **Countdown Timer**: Real-time automated countdown to the wedding ceremony.
+- 💌 **Digital RSVP & Guestbook**: Convenient attendance confirmation and heartfelt blessings board.
+- 📍 **Venue Navigation**: Integrated Google Maps directions to the ceremony location.
+- 🎵 **Background Audio Player**: Background music player with interactive playback controls.
+- 🖼️ **Responsive Gallery**: High-resolution photo showcase with smooth transitions.
 
 ---
 
-## 🚀 Menjalankan Secara Lokal
+## 🌐 Live Website
 
-```bash
-# Clone repository
-git clone https://github.com/Manan-byte/Weding.git
-cd Weding
-
-# Install paket dependensi
-npm install
-
-# Jalankan server development
-npm run dev
-```
+Access the live site at: **[https://irma-manan.netlify.app/](https://irma-manan.netlify.app/)**
